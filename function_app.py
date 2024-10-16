@@ -4,7 +4,7 @@ import pyodbc
 import struct
 import json
 import os
-from azure import identity
+import identity
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
@@ -73,3 +73,4 @@ def get_conn():
     SQL_COPT_SS_ACCESS_TOKEN = 1256  # This connection option is defined by microsoft in msodbcsql.h
     conn = pyodbc.connect(connstring, attrs_before={SQL_COPT_SS_ACCESS_TOKEN: token_struct})
     return conn
+

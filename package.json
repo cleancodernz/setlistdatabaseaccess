@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@azure/ai-form-recognizer": "^5.0.0",
+    "@azure/functions": "^4.5.1"
+  }
+}
