@@ -185,6 +185,31 @@ def get_songs(req: func.HttpRequest) -> func.HttpResponse:
 
     return func.HttpResponse(json.dumps(songs), status_code=200, mimetype="application/json")
 
+@app.route(route="updatesongactivebulk")
+def updatesongactivebulk(req: func.HttpRequest) -> func.HttpResponse:
+    try:
+        # Parse the incoming request body
+        req_body = req.get_json()
+        changes = req_body.get('changes')
+
+        # Connect to your Azure SQL Database
+        conn = get_conn()
+
+        cursor = conn.cursor()
+
+        # Loop through the changes and update the song statuses in the database
+        for change in changes:
+            cursor.execute("UPDATE Songs SET active = ? WHERE id = ?", (change['active'], change['id']))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return func.HttpResponse("Changes saved successfully", status_code=200)
+
+    except Exception as e:
+        return func.HttpResponse(f"Error: {str(e)}", status_code=500)
+
 # get_songs (private method)
 def get_songs_action(is_active):
     try:
