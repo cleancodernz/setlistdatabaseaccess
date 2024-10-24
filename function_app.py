@@ -210,6 +210,30 @@ def updatesongactivebulk(req: func.HttpRequest) -> func.HttpResponse:
     except Exception as e:
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
 
+#check db status
+@app.route(route="checkdbstatus")
+def checkdbstatus(req: func.HttpRequest) -> func.HttpResponse:
+    status = check_db_status()
+    return func.HttpResponse(status, status_code=200)
+
+# private method
+def check_db_status():
+    try:
+        # Try to establish a connection to the Azure SQL Database        
+        conn = get_conn()
+        conn.close()
+        return "online"
+    except pyodbc.OperationalError as e:
+        # If an error occurred, check if it's related to the database being paused
+        if "R_STATE_INACCESSIBLE" in str(e) or "Timeout" in str(e):
+            return "paused"
+        elif "R_STATE_RESUMING" in str(e):
+            return "resuming"
+        else:
+            return "offline"
+    except Exception:
+        return "offline"
+
 # get_songs (private method)
 def get_songs_action(is_active):
     try:
