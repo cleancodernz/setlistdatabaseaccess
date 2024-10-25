@@ -22,7 +22,7 @@ def setlistaccess(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("query: SELECT song_name, artist, length, release_year FROM Songs where active=1")
 
     # Retrieve songs
-    cursor.execute("SELECT song_name, artist, length, release_year FROM Songs where active=1")
+    cursor.execute("SELECT song_name, artist, length, release_year FROM Songs where active=1 ORDER by song_name asc")
     songs = cursor.fetchall()
 
     logging.info(f'songs:{songs}' )
@@ -246,6 +246,7 @@ def get_songs_action(is_active):
             SELECT id, song_name, artist, length, release_year 
             FROM Songs 
             WHERE active = ?
+            ORDER by song_name asc
         """, (1 if is_active else 0))
         
         rows = cursor.fetchall()
